@@ -2,7 +2,6 @@ PROJECT = mnesia-tutorial
 LIB = mnesia-tutorial
 DEPS = ./deps
 BIN_DIR = ./bin
-EXPM = $(BIN_DIR)/expm
 LFETOOL=/usr/local/bin/lfetool
 SOURCE_DIR = ./src
 OUT_DIR = ./ebin
@@ -20,9 +19,6 @@ $(LFETOOL): $(BIN_DIR)
 
 get-version:
 	@PATH=$(SCRIPT_PATH) lfetool info version
-
-$(EXPM): $(BIN_DIR)
-	@PATH=$(SCRIPT_PATH) lfetool install expm
 
 get-deps:
 	@echo "Getting dependencies ..."
@@ -99,13 +95,3 @@ install: compile
 	@echo "Installing {{PROJECT}} ..."
 	@PATH=$(SCRIPT_PATH) lfetool install lfe
 
-upload: $(EXPM) get-version
-	@echo "Preparing to upload {{PROJECT}} ..."
-	@echo
-	@echo "Package file:"
-	@echo
-	@cat package.exs
-	@echo
-	@echo "Continue with upload? "
-	@read
-	$(EXPM) publish
