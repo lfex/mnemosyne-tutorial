@@ -1,97 +1,17 @@
 PROJECT = mnesia-tutorial
-LIB = mnesia-tutorial
-DEPS = ./deps
-BIN_DIR = ./bin
-LFETOOL=/usr/local/bin/lfetool
-SOURCE_DIR = ./src
-OUT_DIR = ./ebin
-TEST_DIR = ./test
-TEST_OUT_DIR = ./.eunit
-SCRIPT_PATH=.:./bin:$(PATH)
 
-$(BIN_DIR):
-	mkdir -p $(BIN_DIR)
+compile:
+	rebar3 compile
 
-$(LFETOOL): $(BIN_DIR)
-	curl -o ./lfetool https://raw.github.com/lfe/lfetool/master/lfetool
-	chmod 755 ./lfetool
-	mv ./lfetool ./bin/
+check:
+	@rebar3 eunit
 
-get-version:
-	@PATH=$(SCRIPT_PATH) lfetool info version
+repl: compile
+	@lfe
 
-get-deps:
-	@echo "Getting dependencies ..."
-	@rebar get-deps >> install.log 2>&1
-	@PATH=$(SCRIPT_PATH) lfetool update deps >> install.log 2>&1
+shell:
+	@rebar3 shell
 
-clean-ebin:
-	@echo "Cleaning ebin dir ..."
-	@rm -f $(OUT_DIR)/*.beam
-
-clean-eunit:
-	@PATH=$(SCRIPT_PATH) lfetool tests clean
-
-compile: get-deps clean-ebin
-	@echo "Compiling project code and dependencies ..."
-	@rebar compile
-
-compile-no-deps: clean-ebin
-	@echo "Compiling only project code ..."
-	@rebar compile skip_deps=true
-
-compile-tests:
-	@PATH=$(SCRIPT_PATH) lfetool tests build
-
-shell: compile
-	@clear
-	@echo "Starting shell ..."
-	@PATH=$(SCRIPT_PATH) lfetool repl
-
-shell-no-deps: compile-no-deps
-	@clear
-	@echo "Starting shell ..."
-	@PATH=$(SCRIPT_PATH) lfetool repl
-
-mnesia-shell: compile-no-deps
-	clear
-	@ERL_LIBS=$(shell lfetool info erllib) \
-	PATH=$(SCRIPT_PATH) \
-	lfe -pa $(TEST_OUT_DIR) -mnesia dir '"$(DB)"'
-
-clean: clean-ebin clean-eunit
-	@rebar clean
-
-check-unit-only:
-	@PATH=$(SCRIPT_PATH) lfetool tests unit
-
-check-integration-only:
-	@PATH=$(SCRIPT_PATH) lfetool tests integration
-
-check-system-only:
-	@PATH=$(SCRIPT_PATH) lfetool tests system
-
-check-unit-with-deps: get-deps compile compile-tests check-unit-only
-check-unit: compile-no-deps check-unit-only
-check-integration: compile check-integration-only
-check-system: compile check-system-only
-check-all-with-deps: compile check-unit-only check-integration-only \
-	check-system-only
-check-all: get-deps compile-no-deps
-	@PATH=$(SCRIPT_PATH) lfetool tests all
-
-check: check-unit-with-deps
-
-check-travis: $(LFETOOL) check
-
-push-all:
-	@echo "Pusing code to github ..."
-	git push --all
-	git push upstream --all
-	git push --tags
-	git push upstream --tags
-
-install: compile
-	@echo "Installing {{PROJECT}} ..."
-	@PATH=$(SCRIPT_PATH) lfetool install lfe
-
+clean:
+	@rebar3 clean
+	@rebar3 lfe clean

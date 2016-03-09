@@ -1,11 +1,11 @@
 %% -*- erlang -*-
-{application, 'mnesia-tutorial',
+{application, mnesiatut,
  [
   %% A quick description of the application.
   {description, "My project description..."},
 
   %% The version of the application
-  {vsn, "0.0.1"},
+  {vsn, "0.2.0"},
 
   %% All modules used by the application.
   {modules,

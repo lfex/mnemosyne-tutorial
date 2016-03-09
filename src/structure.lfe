@@ -1,8 +1,8 @@
 (defmodule structure
   (export all))
 
-(include-lib "include/tables.lfe")
-(include-lib "deps/lfe-utils/include/mnesia-macros.lfe")
+(include-lib "mnesiatut/include/tables.lfe")
+(include-lib "lutil/include/mnesia-macros.lfe")
 
 ; XXX once we can call macros in a map function, we'll uncomment these and
 ; use them
@@ -24,11 +24,10 @@
   ;   (lambda (x) (funcall (eval (macro-function 'create-tables '()) x)))
   ;   (set-table-names)))
   ; XXX until then, manual calls:
-  (list
-    (create-table employee ())
-    (create-table department ())
-    (create-table project ())
-    (create-table in-department ())))
+  `(,(create-table employee '())
+    ,(create-table department '())
+    ,(create-table project '())
+    ,(create-table in-department '())))
 
 (defun create-bag-tables ()
   ; XXX hopefully, the following will work soon!
@@ -38,8 +37,8 @@
   ;   (set-table-names)))
   ; XXX until then, manual calls:
   (list
-    (create-table manager (#(type bag)))
-    (create-table in-project (#(type bag)))))
+    (create-table manager '(#(type bag)))
+    (create-table in-project '(#(type bag)))))
 
 (defun get-status (list-of-tuples)
   (case (lists:dropwhile (lambda (x) (== (element 2 x) 'ok))
@@ -51,8 +50,6 @@
   (let* ((sets (create-set-tables))
          (bags (create-bag-tables))
          (status (get-status (++ sets bags))))
-    (tuple
-      status
-      (list
-        (tuple 'create-set-tables sets)
-        (tuple 'create-bag-tables bags)))))
+    `#(,status
+       (#(create-set-tables ,sets)
+        #(create-bag-tables ,bags)))))

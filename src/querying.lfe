@@ -2,7 +2,7 @@
   (export all))
 
 (include-lib "stdlib/include/qlc.hrl")
-(include-lib "include/tables.lfe")
+(include-lib "mnesiatut/include/tables.lfe")
 
 (defun show-data (table-name)
   (mnesia:transaction

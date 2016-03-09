@@ -1,7 +1,7 @@
 (defmodule content
   (export all))
 
-(include-lib "include/tables.lfe")
+(include-lib "mnesiatut/include/tables.lfe")
 
 (defun insert-departments
   "A utility function for populating the department table."
