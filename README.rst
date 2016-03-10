@@ -1,5 +1,5 @@
 ###################
-LFE Mnesia Tutorial
+LFE Moneta Tutorial
 ###################
 
 
